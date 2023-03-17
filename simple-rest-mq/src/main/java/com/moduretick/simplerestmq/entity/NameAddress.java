@@ -1,5 +1,7 @@
 package com.moduretick.simplerestmq.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,8 +17,10 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 @Table(name = "name_address")
 @NamedQuery(name="fetchAllRows", query="Select x from NameAddress x")
 @CsvRecord(separator = ";")
-public class NameAddress {
+public class NameAddress implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
