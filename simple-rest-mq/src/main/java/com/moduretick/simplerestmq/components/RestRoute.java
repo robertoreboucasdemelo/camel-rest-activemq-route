@@ -25,9 +25,19 @@ public class RestRoute extends RouteBuilder {
 		.post("nameAddress").type(NameAddress.class)
 		.to("direct:process");
 		
-		from("direct:process").routeId("processMessageRouteId")
-		.to("activemq:queue:NameAddressQueue?exchangePattern=InOnly")
+		from("direct:process")
+		.routeId("processMessageRouteId")
+		.to("direct:toDatabase")
+		.to("direct:toActiveMQ");
+		
+		
+		from("direct:toDatabase")
+		.routeId("toDatabaseId")
 		.to("jpa:"+ NameAddress.class.getName());
+		
+		from("direct:toActiveMQ")
+		.routeId("toActiveMQId")
+		.to("activemq:queue:NameAddressQueue?exchangePattern=InOnly");
 	}
 
 }

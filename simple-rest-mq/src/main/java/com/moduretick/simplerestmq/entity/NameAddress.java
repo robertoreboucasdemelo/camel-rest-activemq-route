@@ -82,9 +82,11 @@ public class NameAddress implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "NameAddress [name=" + name + ", houseNumber=" + houseNumber + ", city=" + city + ", province="
-				+ province + ", postalCode=" + postalCode + "]";
+		return "NameAddress [id=" + id + ", name=" + name + ", houseNumber=" + houseNumber + ", city=" + city
+				+ ", province=" + province + ", postalCode=" + postalCode + "]";
 	}
+	
+	
 	
 	
 	
