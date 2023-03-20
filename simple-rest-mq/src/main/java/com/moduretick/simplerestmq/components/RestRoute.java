@@ -1,5 +1,10 @@
 package com.moduretick.simplerestmq.components;
 
+import java.net.ConnectException;
+
+import javax.jms.JMSException;
+
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
@@ -11,6 +16,11 @@ public class RestRoute extends RouteBuilder {
 
 	@Override
 	public void configure() throws Exception {
+		
+		onException(JMSException.class, ConnectException.class)
+		.routeId("jmsExceptionRouteId")
+		.handled(true)
+		.log(LoggingLevel.INFO, "JMS Exception has Occurred; Handling Gracefully");
 		
 		restConfiguration()
 		.component("jetty")
