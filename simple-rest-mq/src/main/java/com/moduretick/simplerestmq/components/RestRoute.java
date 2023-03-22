@@ -4,6 +4,7 @@ import java.net.ConnectException;
 
 import javax.jms.JMSException;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
@@ -38,7 +39,8 @@ public class RestRoute extends RouteBuilder {
 		from("direct:process")
 		.routeId("processMessageRouteId")
 		.to("direct:toDatabase")
-		.to("direct:toActiveMQ");
+		.to("direct:toActiveMQ")
+		.setHeader(Exchange.HTTP_RESPONSE_CODE, constant(201));
 		
 		
 		from("direct:toDatabase")
