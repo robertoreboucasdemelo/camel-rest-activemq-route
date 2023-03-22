@@ -6,10 +6,12 @@ import javax.jms.JMSException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.stereotype.Component;
 
+import com.moduretick.simplerestmq.beans.InboundRestProcessingBean;
 import com.moduretick.simplerestmq.entity.NameAddress;
 
 @Component
@@ -17,6 +19,8 @@ public class RestRoute extends RouteBuilder {
 
 	@Override
 	public void configure() throws Exception {
+		
+		Predicate isCityNewYork = header("userCity").isEqualTo("New York");
 		
 		onException(JMSException.class, ConnectException.class)
 		.routeId("jmsExceptionRouteId")
@@ -38,8 +42,19 @@ public class RestRoute extends RouteBuilder {
 		
 		from("direct:process")
 		.routeId("processMessageRouteId")
-		.to("direct:toDatabase")
-		.to("direct:toActiveMQ")
+		.bean(new InboundRestProcessingBean())
+		
+		// Setup Rule
+		// If City == New York -> Send only to MQ
+		// Else Send to Both DB and MQ
+		
+		.choice()
+		.when(isCityNewYork)
+			.to("direct:toActiveMQ")
+		.otherwise()
+			.to("direct:toDatabase")
+			.to("direct:toActiveMQ")
+		.end()
 		.setHeader(Exchange.HTTP_RESPONSE_CODE, constant(201));
 		
 		
